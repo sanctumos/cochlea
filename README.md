@@ -11,8 +11,5 @@
 3. Install dependencies:
 `pip install -r requirements.txt`
 
-4. Verify installation:
-`pip freeze`
-
-5. Deactivate when done:
+4. Deactivate when done:
 `deactivate`

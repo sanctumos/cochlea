@@ -29,11 +29,11 @@ class LatencyTracker:
 
     def update_metric(self, mtrcs: metrics.AgentMetrics):
         """Updates stored metrics for the current invocation based on metric type."""
-        if isinstance(mtrcs, PipelineEOUMetrics):
+        if isinstance(mtrcs, PipelineEOUMetrics) and mtrcs.end_of_utterance_delay >= 0:
             self.current_invocation["eou_delay"] = mtrcs.end_of_utterance_delay
-        elif isinstance(mtrcs, PipelineLLMMetrics):
+        elif isinstance(mtrcs, PipelineLLMMetrics) and mtrcs.ttft >= 0:
             self.current_invocation["llm_ttft"] = mtrcs.ttft
-        elif isinstance(mtrcs, PipelineTTSMetrics):
+        elif isinstance(mtrcs, PipelineTTSMetrics) and mtrcs.ttfb >= 0:
             self.current_invocation["tts_ttfb"] = mtrcs.ttfb
 
         # Store once all values are available
@@ -94,7 +94,11 @@ async def entrypoint(ctx: JobContext):
     agent = VoicePipelineAgent(
         vad=ctx.proc.userdata["vad"],
         stt=deepgram.STT(),
-        llm=openai.LLM(model="gpt-4o-mini"),
+        llm=openai.LLM(
+            # base_url="https://437c339b175e.ngrok.app/openai/v1",
+            model="gpt-4o-mini",
+            # user="agent-4958c5f7-d47e-447b-981b-3e8d2e2269cf"
+        ),
         tts=cartesia.TTS(),
         chat_ctx=initial_ctx,
     )
@@ -139,7 +143,7 @@ async def entrypoint(ctx: JobContext):
 
     ctx.add_shutdown_callback(_log_usage_summary)
 
-    await agent.say("Hey, how can I help you today?", allow_interruptions=True)
+    await agent.say("Hi! What's your name?", allow_interruptions=True)
 
 
 if __name__ == "__main__":

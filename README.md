@@ -2,9 +2,9 @@
 This repo show how to use Letta and Livekit to create low-latency voice agents with memory, tool execution, and persistence. 
 
 ## Installation
-1. Clone this repository `git@github.com:letta-ai/letta-voice.git`
-2. Install requirements 
+First install the basic requirements in a virtual enviornment (Python >= 3.10): 
 ```
+git clone git@github.com:letta-ai/letta-voice.git
 cd letta-voice 
 pip install -r requirements.txt
 ```

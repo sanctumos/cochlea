@@ -1,6 +1,7 @@
 import asyncio
 import logging
 
+import os
 from dotenv import load_dotenv
 from livekit import rtc
 from livekit.agents import (
@@ -16,7 +17,14 @@ from livekit.agents.metrics import PipelineEOUMetrics, PipelineLLMMetrics, Pipel
 from livekit.agents.pipeline import VoicePipelineAgent
 from livekit.plugins import deepgram, openai, silero, cartesia
 
+
+# Load environment variables
 load_dotenv()
+
+# Get environment variables
+agent_id = os.getenv('LETTA_AGENT_ID')
+ngrok_endpoint = os.getenv('NGROK_ENDPOINT')
+
 logger = logging.getLogger("voice-assistant")
 
 
@@ -91,17 +99,32 @@ async def entrypoint(ctx: JobContext):
     participant = await ctx.wait_for_participant()
     logger.info(f"Starting voice assistant for participant {participant.identity}")
 
-    agent = VoicePipelineAgent(
-        vad=ctx.proc.userdata["vad"],
-        stt=deepgram.STT(),
-        llm=openai.LLM(
-            # base_url="https://437c339b175e.ngrok.app/openai/v1",
-            model="gpt-4o-mini",
-            # user="agent-4958c5f7-d47e-447b-981b-3e8d2e2269cf"
-        ),
-        tts=cartesia.TTS(),
-        chat_ctx=initial_ctx,
-    )
+    if agent_id and ngrok_endpoint: 
+        print(f"Using Letta agent {agent_id}")
+        agent = VoicePipelineAgent(
+            vad=ctx.proc.userdata["vad"],
+            stt=deepgram.STT(),
+            llm=openai.LLM(
+                base_url=f"{ngrok_endpoint}/openai/v1",
+                model="gpt-4o-mini",
+                user=agent_id
+            ),
+            tts=cartesia.TTS(),
+            chat_ctx=initial_ctx,
+        )
+    else:
+        print("Using OpenAI")
+        agent = VoicePipelineAgent(
+            vad=ctx.proc.userdata["vad"],
+            stt=deepgram.STT(),
+            llm=openai.LLM(
+                # base_url="https://437c339b175e.ngrok.app/openai/v1",
+                model="gpt-4o-mini",
+                # user="agent-4958c5f7-d47e-447b-981b-3e8d2e2269cf"
+            ),
+            tts=cartesia.TTS(),
+            chat_ctx=initial_ctx,
+        )
     agent.start(ctx.room, participant)
 
     usage_collector = metrics.UsageCollector()

@@ -1,7 +1,7 @@
 # Stateful Voice Agents  
 This repo show how to use Letta and Livekit to create low-latency voice agents with memory, tool execution, and persistence. 
 
-## Installation
+## Installation & Setup 
 First install the basic requirements in a virtual enviornment (Python >= 3.10): 
 ```
 git clone git@github.com:letta-ai/letta-voice.git
@@ -25,7 +25,7 @@ To run Letta, you can either install and run [Letta Desktop](https://docs.letta.
 docker run \
   -v ~/.letta/.persist/pgdata:/var/lib/postgresql/data \
   -p 8283:8283 \
-  -e OPENAI_API_KEY="your_openai_api_key" \
+  -e OPENAI_API_KEY=${OPENAI_API_KEY} \
   letta/letta:latest
 ```
 See Letta's full quickstart and installation instructions [here](https://docs.letta.com/quickstart). 

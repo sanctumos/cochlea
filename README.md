@@ -8,7 +8,7 @@ git clone git@github.com:letta-ai/letta-voice.git
 cd letta-voice 
 pip install -r requirements.txt
 ```
-You also will need to setup Livekit, Letta, and ngrok, and set the following env vars: 
+You also will to set env vars to configure your accounts with Livekit, Deepgram, Cartesia and OpenAI: 
 ```
 LIVEKIT_URL=wss://letta-h884jw2p.livekit.cloud
 LIVEKIT_API_KEY=...
@@ -19,13 +19,7 @@ CARTESIA_API_KEY=...
 OPENAI_API_KEY=...
 ```
 
-### Livekit
-Create an account with LiveKit and set `LIVEKIT_API_SECRET`: 
-```
-export LIVEKIT_API_SECRET=gsk_....
-```
-
-### Letta 
+### Running Letta 
 To run Letta, you can either install and run [Letta Desktop](https://docs.letta.com/install) or run a Letta service with Docker: 
 ```
 docker run \
@@ -37,7 +31,7 @@ docker run \
 See Letta's full quickstart and installation instructions [here](https://docs.letta.com/quickstart). 
 
 
-### ngrok 
+### Running ngrok 
 1. Install ngrok
 2. Add your ngrok authtoken with `ngrok config <YOUR-AUTHTOKEN>`
 3. Make sure you have a Letta server running at `http://localhost:8283`.

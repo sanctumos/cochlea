@@ -8,7 +8,16 @@ git clone git@github.com:letta-ai/letta-voice.git
 cd letta-voice 
 pip install -r requirements.txt
 ```
-You also will need to setup Livekit, Letta, and ngrok. 
+You also will need to setup Livekit, Letta, and ngrok, and set the following env vars: 
+```
+LIVEKIT_URL=wss://letta-h884jw2p.livekit.cloud
+LIVEKIT_API_KEY=...
+LIVEKIT_API_SECRET=...
+
+DEEPGRAM_API_KEY=...
+CARTESIA_API_KEY=...
+OPENAI_API_KEY=...
+```
 
 ### Livekit
 Create an account with LiveKit and set `LIVEKIT_API_SECRET`: 

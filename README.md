@@ -10,7 +10,7 @@ pip install -r requirements.txt
 ```
 You also will to set env vars to configure your accounts with Livekit, Deepgram, and Cartesia: 
 ```
-LIVEKIT_URL=wss://letta-h884jw2p.livekit.cloud
+LIVEKIT_URL=
 LIVEKIT_API_KEY=...
 LIVEKIT_API_SECRET=...
 
@@ -21,7 +21,7 @@ CARTESIA_API_KEY=...
 ## Connecting Letta to Voice
 1. Set `LETTA_ENDPOINT` to your Letta endpoint, for example: 
 ```
-export LETTA_ENDPOINT=http://35.194.32.64
+export LETTA_ENDPOINT=
 ```
 2. Set the `LETTA_AGENT_ID=agent-....` to the agent backend, for example: 
 ```

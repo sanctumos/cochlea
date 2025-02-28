@@ -105,7 +105,7 @@ async def entrypoint(ctx: JobContext):
             vad=ctx.proc.userdata["vad"],
             stt=deepgram.STT(),
             llm=openai.LLM(
-                base_url=f"{ngrok_endpoint}/openai/v1",
+                base_url=f"{ngrok_endpoint}/openai/v1/voice",
                 model="gpt-4o-mini",
                 user=agent_id
             ),

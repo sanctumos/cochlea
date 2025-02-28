@@ -23,7 +23,7 @@ load_dotenv()
 
 # Get environment variables
 agent_id = os.getenv('LETTA_AGENT_ID')
-ngrok_endpoint = os.getenv('NGROK_ENDPOINT')
+ngrok_endpoint = os.getenv('LETTA_ENDPOINT')
 
 logger = logging.getLogger("voice-assistant")
 
@@ -105,7 +105,7 @@ async def entrypoint(ctx: JobContext):
             vad=ctx.proc.userdata["vad"],
             stt=deepgram.STT(),
             llm=openai.LLM(
-                base_url=f"{ngrok_endpoint}/openai/v1/voice",
+                base_url=f"{ngrok_endpoint}/v1/voice",
                 model="gpt-4o-mini",
                 user=agent_id
             ),

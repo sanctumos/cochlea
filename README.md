@@ -19,6 +19,21 @@ CARTESIA_API_KEY=...
 OPENAI_API_KEY=...
 ```
 
+## Connecting Letta to Voice
+1. Set `LETTA_ENDPOINT` to your Letta endpoint, for example: 
+```
+export LETTA_ENDPOINT=http://35.194.32.64
+```
+2. Set the `LETTA_AGENT_ID=agent-....` to the agent backend, for example: 
+```
+export LETTA_AGENT_ID=agent-xxxxxxx
+```
+3. Run `python main.py dev`
+4. Go to the Livekit Agents Playground: https://agents-playground.livekit.io/
+5. Chat with your agent
+
+## Running Letta (Optional: only if you don't have cloud access)
+
 ### Running Letta 
 To run Letta, you can either install and run [Letta Desktop](https://docs.letta.com/install) or run a Letta service with Docker: 
 ```
@@ -35,24 +50,15 @@ See Letta's full quickstart and installation instructions [here](https://docs.le
 1. Install ngrok
 2. Add your ngrok authtoken with `ngrok config <YOUR-AUTHTOKEN>`
 3. Make sure you have a Letta server running at `http://localhost:8283`.
-4. Set `NGROK_URL=http://...`  to your ngrok URL. For example:
+4. Set `LETTA_ENDPOINT=http://...`  to your ngrok URL. For example:
 ```
-export NGROK_ENDPOINT=https://xxxx.ngrok.app
+export LETTA_ENDPOINT=https://xxxx.ngrok.app
 ```
-
-
-## Running a Voice Agent  
-1. Create an agent with Letta. You can do this in the ADE or via a REST API call. 
-2. Set the `LETTA_AGENT_ID=agent-....`, for example: 
-```
-export LETTA_AGENT_ID=agent-xxxxxxx
-```
-3. Run `python main.py dev`
-4. Go to the Livekit Agents Playground: https://agents-playground.livekit.io/
-5. Chat with your agent
 
 ## Performance 
 TODO: notes on performance
 
 ## Viewing Agent Interactions 
 TODO: ADE demo 
+
+

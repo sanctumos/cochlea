@@ -8,7 +8,7 @@ git clone git@github.com:letta-ai/letta-voice.git
 cd letta-voice 
 pip install -r requirements.txt
 ```
-You also will to set env vars to configure your accounts with Livekit, Deepgram, Cartesia and OpenAI: 
+You also will to set env vars to configure your accounts with Livekit, Deepgram, and Cartesia: 
 ```
 LIVEKIT_URL=wss://letta-h884jw2p.livekit.cloud
 LIVEKIT_API_KEY=...

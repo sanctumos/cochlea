@@ -16,7 +16,7 @@ from livekit.agents import (
 from livekit.agents.metrics import PipelineEOUMetrics, PipelineLLMMetrics, PipelineTTSMetrics
 from livekit.agents.pipeline import VoicePipelineAgent
 from livekit.plugins import deepgram, openai, silero, cartesia
-
+from openai import api_key
 
 # Load environment variables
 load_dotenv()
@@ -90,7 +90,7 @@ def prewarm(proc: JobProcess):
 async def entrypoint(ctx: JobContext):
     initial_ctx = llm.ChatContext().append(
         role="system",
-        text="You are a voice assistant that plays 20 questions with the user, where the user is trying to guess the word. You should have a word in mind already.",
+        text="You are a voice assistant that is friendly, brief, and to the point. You should try to ask engaging questions to the user.",
     )
 
     logger.info(f"Connecting to room {ctx.room.name}")
@@ -105,9 +105,13 @@ async def entrypoint(ctx: JobContext):
             vad=ctx.proc.userdata["vad"],
             stt=deepgram.STT(),
             llm=openai.LLM(
-                base_url=f"{ngrok_endpoint}/v1/voice",
+                # base_url=f"{ngrok_endpoint}/v1/voice",
+                base_url=f"https://82a15f78ee62.ngrok.app/v1/voice-beta/agent-7aa8fb84-8901-4b59-9d4c-6e7cdd1ee8c0",
+                # base_url=f"https://beta-api.letta.com/v1/voice",
                 model="gpt-4o-mini",
-                user=agent_id
+                # api_key="MTNjYjFkOTctYWViNS00NzU3LTk5YzAtM2M5ZmEzY2U1NTUwOmJlZjMwZjk3LWJmNzMtNGRlNS1iY2U2LTQzMDMxMjM3NWI5Mg==",
+                # user="agent-5a26c642-323f-46a6-902b-3dbf37b83c18"
+                # user=agent_id
             ),
             tts=cartesia.TTS(),
             chat_ctx=initial_ctx,

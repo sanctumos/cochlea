@@ -11,7 +11,7 @@ pip install -r requirements.txt
 For this example, you will need accounts with the following providers: 
 * [Livekit](https://livekit.io/) for handling the voice connection
 * [Deepgram](https://deepgram.com/) for speech-to-text
-* [Cartesia](https://cartesia.io/) for text-to-speech
+* [Cartesia](https://cartesia.ai/) for text-to-speech
 
 You will also need to set up the following environment variables (or create a `.env` file):
 ```sh 

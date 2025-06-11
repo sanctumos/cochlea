@@ -106,8 +106,9 @@ async def entrypoint(ctx: JobContext):
             stt=deepgram.STT(),
             llm=openai.LLM(
                 # base_url=f"{ngrok_endpoint}/v1/voice",
-                base_url=f"https://82a15f78ee62.ngrok.app/v1/voice-beta/agent-7aa8fb84-8901-4b59-9d4c-6e7cdd1ee8c0",
+                #base_url=f"https://82a15f78ee62.ngrok.app/v1/voice-beta/agent-7aa8fb84-8901-4b59-9d4c-6e7cdd1ee8c0",
                 # base_url=f"https://beta-api.letta.com/v1/voice",
+                base_url=f"https://9cd81d0cdf94.ngrok.app/v1/voice-beta/agent-357327a9-a3d1-43d6-9ce9-936fe654d8c3", 
                 model="gpt-4o-mini",
                 # api_key="MTNjYjFkOTctYWViNS00NzU3LTk5YzAtM2M5ZmEzY2U1NTUwOmJlZjMwZjk3LWJmNzMtNGRlNS1iY2U2LTQzMDMxMjM3NWI5Mg==",
                 # user="agent-5a26c642-323f-46a6-902b-3dbf37b83c18"

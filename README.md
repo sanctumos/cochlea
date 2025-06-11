@@ -8,30 +8,29 @@ git clone git@github.com:letta-ai/letta-voice.git
 cd letta-voice 
 pip install -r requirements.txt
 ```
-You also will to set env vars to configure your accounts with Livekit, Deepgram, and Cartesia: 
-```
-LIVEKIT_URL=
-LIVEKIT_API_KEY=...
-LIVEKIT_API_SECRET=...
+For this example, you will need accounts with the following providers: 
+* [Livekit](https://livekit.io/) for handling the voice connection
+* [Deepgram](https://deepgram.com/) for speech-to-text
+* [Cartesia](https://cartesia.io/) for text-to-speech
 
-DEEPGRAM_API_KEY=...
-CARTESIA_API_KEY=...
+You will also need to set up the following environment variables (or create a `.env` file):
+```sh 
+LETTA_API_KEY=... # Letta Cloud API key (if using cloud)
+
+LIVEKIT_URL=wss://<YOUR-ROOM>.livekit.cloud # Livekit URL
+LIVEKIT_API_KEY=... # Livekit API key
+LIVEKIT_API_SECRET=... # Livekit API secret
+
+DEEPGRAM_API_KEY=... # Deepgram API key
+CARTESIA_API_KEY=... # Cartesia API key
 ```
 
 ## Connecting Letta to Voice
-1. Set `LETTA_ENDPOINT` to your Letta endpoint, for example: 
-```
-export LETTA_ENDPOINT=
-```
-2. Set the `LETTA_AGENT_ID=agent-....` to the agent backend, for example: 
-```
-export LETTA_AGENT_ID=agent-xxxxxxx
-```
-3. Run `python main.py dev`
-4. Go to the Livekit Agents Playground: https://agents-playground.livekit.io/
-5. Chat with your agent
+1. Run `python main.py dev`
+2. Go to the Livekit Agents Playground: https://agents-playground.livekit.io/
+3. Chat with your agent
 
-## Running Letta (Optional: only if you don't have cloud access)
+## Running with a self-hosted Letta Server
 
 ### Running Letta 
 To run Letta, you can either install and run [Letta Desktop](https://docs.letta.com/install) or run a Letta service with Docker: 
@@ -46,18 +45,16 @@ See Letta's full quickstart and installation instructions [here](https://docs.le
 
 
 ### Running ngrok 
-1. Install ngrok
-2. Add your ngrok authtoken with `ngrok config <YOUR-AUTHTOKEN>`
-3. Make sure you have a Letta server running at `http://localhost:8283`.
-4. Set `LETTA_ENDPOINT=http://...`  to your ngrok URL. For example:
+If you are self-hosting the Letta server locally (at `localhost`), you will need to use `ngrok` to expose your Letta server to the internet: 
+1. Create an account on [ngrok](https://ngrok.com/)
+2. Create an auth token and add it into your CLI 
 ```
-export LETTA_ENDPOINT=https://xxxx.ngrok.app
+ngrok config add-authtoken <YOUR_AUTH_TOKEN> 
 ```
-
-## Performance 
-TODO: notes on performance
-
-## Viewing Agent Interactions 
-TODO: ADE demo 
+3. Point your ngrok server to your Letta server: 
+```
+ngrok http http://localhost:8283
+```
+Now, you should have a forwarding URL like `https://<YOUR_FORWARDING_URL>.ngrok.app`, which you can pass in as the `base_url` to `openai.LLM.with_letta(...)`. 
 
 

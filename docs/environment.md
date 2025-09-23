@@ -10,8 +10,8 @@ Create a `.env` file in your project root directory. This file should **never be
 
 ```bash
 # .env file example
-LETTA_API_KEY=your_letta_api_key_here
-LETTA_BASE_URL=http://YOUR_VPS_IP:8283/v1
+LETTA_API_KEY=your_sanctum_api_key_here
+LETTA_BASE_URL=http://YOUR_SANCTUM_IP:8283/v1
 LIVEKIT_URL=wss://<YOUR-ROOM>.livekit.cloud
 LIVEKIT_API_KEY=your_livekit_api_key
 LIVEKIT_API_SECRET=your_livekit_api_secret
@@ -21,14 +21,14 @@ CARTESIA_API_KEY=your_cartesia_api_key
 
 ## Required Environment Variables
 
-### Letta Configuration
+### Sanctum Instance Configuration
 
 | Variable | Description | Required | Example |
 |----------|-------------|----------|---------|
-| `LETTA_API_KEY` | Your Letta API key for authentication | Yes | `sk-...` |
-| `LETTA_BASE_URL` | Base URL for self-hosted Letta instance | No* | `http://192.168.1.100:8283/v1` |
+| `LETTA_API_KEY` | Your Sanctum instance API key for authentication | Yes | `sk-...` |
+| `LETTA_BASE_URL` | Base URL for your Sanctum instance | Yes | `http://192.168.1.100:8283/v1` |
 
-*`LETTA_BASE_URL` is only required when using a self-hosted Letta instance. If omitted, it defaults to Letta Cloud.
+**Note:** Sanctum Cochlea requires a working Sanctum instance. The `LETTA_BASE_URL` must point to your self-hosted Sanctum instance.
 
 ### LiveKit Configuration
 
@@ -76,10 +76,11 @@ CARTESIA_API_KEY=your_cartesia_api_key
 
 ## Configuration Examples
 
-### Letta Cloud Setup
+### Sanctum Instance Setup
 ```bash
-# .env for Letta Cloud
-LETTA_API_KEY=sk-your-cloud-api-key
+# .env for Sanctum instance
+LETTA_API_KEY=sk-your-sanctum-api-key
+LETTA_BASE_URL=http://192.168.1.100:8283/v1
 LIVEKIT_URL=wss://myroom.livekit.cloud
 LIVEKIT_API_KEY=APIkey123
 LIVEKIT_API_SECRET=secret456
@@ -87,11 +88,11 @@ DEEPGRAM_API_KEY=dg_key_789
 CARTESIA_API_KEY=cart_key_012
 ```
 
-### Self-Hosted Letta Setup
+### Production Sanctum Setup
 ```bash
-# .env for self-hosted Letta
-LETTA_API_KEY=sk-your-self-hosted-key
-LETTA_BASE_URL=http://192.168.1.100:8283/v1
+# .env for production Sanctum instance
+LETTA_API_KEY=sk-your-production-sanctum-key
+LETTA_BASE_URL=https://sanctum.yourdomain.com/v1
 LIVEKIT_URL=wss://myroom.livekit.cloud
 LIVEKIT_API_KEY=APIkey123
 LIVEKIT_API_SECRET=secret456

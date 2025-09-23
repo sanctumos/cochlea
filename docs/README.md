@@ -20,7 +20,7 @@ This documentation explains how to set up and configure Sanctum Cochlea to work 
 ## Overview
 
 Sanctum Cochlea creates low-latency voice agents using:
-- **Letta** - For AI agent management and memory
+- **Sanctum Instance** - Self-hosted AI agent platform (supports OpenAI, Anthropic, Ollama, and other LLM providers)
 - **LiveKit** - For real-time voice communication
 - **Deepgram** - For speech-to-text
 - **Cartesia** - For text-to-speech
@@ -36,9 +36,9 @@ User Voice → LiveKit → Sanctum Cochlea Agent → Letta Instance → AI Model
 ## Prerequisites
 
 - Python 3.10+
-- Docker (for self-hosting Letta)
+- **Working Sanctum Instance** - Self-hosted AI agent platform
 - Accounts with LiveKit, Deepgram, and Cartesia
-- VPS or cloud server (for self-hosting)
+- VPS or cloud server (for hosting Sanctum instance)
 
 ## Getting Help
 

@@ -50,20 +50,18 @@ You'll need accounts with these services:
 2. Create an account and get your API key
 3. This handles text-to-speech conversion
 
-### Letta (Choose One)
-- **Option A: Letta Cloud** - Use the hosted service
-- **Option B: Self-Hosted** - Run your own instance (see [VPS Connection Guide](vps-connection.md))
+### Sanctum Instance (Required)
+- **Self-Hosted Sanctum Instance** - You must have a working Sanctum instance configured with your preferred LLM provider
+- See [VPS Connection Guide](vps-connection.md) for setup details
 
 ## Step 3: Environment Configuration
 
 Create a `.env` file in your project root:
 
 ```bash
-# Letta Configuration
-LETTA_API_KEY=your_letta_api_key_here
-
-# For self-hosted Letta, add:
-# LETTA_BASE_URL=http://YOUR_VPS_IP:8283/v1
+# Sanctum Instance Configuration
+LETTA_API_KEY=your_sanctum_api_key_here
+LETTA_BASE_URL=http://YOUR_SANCTUM_IP:8283/v1
 
 # LiveKit Configuration
 LIVEKIT_URL=wss://<YOUR-ROOM>.livekit.cloud

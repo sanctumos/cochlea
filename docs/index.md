@@ -43,7 +43,7 @@ User Voice → LiveKit → Sanctum Cochlea Agent → Letta Instance → AI Model
 - **Flexible Deployment** - Easy switching between environments
 
 ### Required Services
-- **Letta** - AI agent management and memory
+- **Sanctum Instance** - Self-hosted AI agent platform (supports OpenAI, Anthropic, Ollama, and other LLM providers)
 - **LiveKit** - Real-time voice communication
 - **Deepgram** - Speech-to-text conversion
 - **Cartesia** - Text-to-speech conversion
@@ -51,12 +51,12 @@ User Voice → LiveKit → Sanctum Cochlea Agent → Letta Instance → AI Model
 ## 🎯 Common Use Cases
 
 ### Development
-- Local testing with Letta Cloud
+- Local testing with Sanctum instance
 - Voice agent development and testing
 - Integration testing
 
 ### Production
-- Self-hosted Letta on VPS
+- Self-hosted Sanctum instance on VPS
 - Custom voice agent deployment
 - Production voice applications
 

@@ -29,7 +29,7 @@ This project includes detailed documentation to help you get started:
 ## 🎯 What This Project Does
 
 Creates low-latency voice agents using:
-- **Letta** - AI agent management and memory
+- **Sanctum Instance** - Your self-hosted AI agent platform (supports OpenAI, Anthropic, Ollama, and other LLM providers)
 - **LiveKit** - Real-time voice communication
 - **Deepgram** - Speech-to-text conversion
 - **Cartesia** - Text-to-speech conversion
@@ -89,7 +89,8 @@ This architecture mirrors the human auditory system:
 
 ### Prerequisites
 - Python 3.10+
-- Accounts with [LiveKit](https://livekit.io/), [Deepgram](https://deepgram.com/), [Cartesia](https://cartesia.ai/), and [OpenAI](https://openai.com/)
+- **Working Sanctum Instance** - Self-hosted AI agent platform (configured with your preferred LLM provider)
+- Accounts with [LiveKit](https://livekit.io/), [Deepgram](https://deepgram.com/), and [Cartesia](https://cartesia.ai/)
 
 ### Installation
 ```bash
@@ -101,8 +102,9 @@ pip install -r requirements.txt
 ### Basic Configuration
 Create a `.env` file:
 ```bash
-# Letta Configuration
-LETTA_API_KEY=your_letta_api_key
+# Sanctum Instance Configuration
+LETTA_API_KEY=your_sanctum_api_key
+LETTA_BASE_URL=http://YOUR_SANCTUM_IP:8283/v1
 
 # LiveKit Configuration
 LIVEKIT_URL=wss://<YOUR-ROOM>.livekit.cloud
@@ -112,9 +114,6 @@ LIVEKIT_API_SECRET=your_livekit_api_secret
 # Speech Services
 DEEPGRAM_API_KEY=your_deepgram_api_key
 CARTESIA_API_KEY=your_cartesia_api_key
-
-# OpenAI Configuration (required for Letta)
-OPENAI_API_KEY=your_openai_api_key
 ```
 
 ### Run
@@ -122,15 +121,18 @@ OPENAI_API_KEY=your_openai_api_key
 python main.py dev
 ```
 
-## 🔗 Connection Options
+## 🔗 Sanctum Instance Requirements
 
-### Letta Cloud (Default)
-- No additional configuration needed
-- Uses hosted Letta service
+### Required: Working Sanctum Instance
+Sanctum Cochlea requires a **working Sanctum instance** (self-hosted AI agent platform) configured with your preferred LLM provider:
 
-### Self-Hosted Letta
-- Set `LETTA_BASE_URL=http://YOUR_VPS_IP:8283/v1` in your `.env`
-- **Custom LLM Wrapper Required** - See technical details below
+- **OpenAI** - GPT-4, GPT-3.5, etc.
+- **Anthropic** - Claude Sonnet, Claude Haiku, etc.
+- **Ollama** - Local models like Llama, Mistral, etc.
+- **Other Providers** - Any LLM provider supported by Sanctum
+
+### Configuration
+- Set `LETTA_BASE_URL=http://YOUR_SANCTUM_IP:8283/v1` in your `.env`
 - See [VPS Connection Guide](docs/vps-connection.md) for detailed setup
 
 ## 🔧 Technical Implementation Details

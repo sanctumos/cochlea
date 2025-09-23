@@ -1,5 +1,7 @@
 # Quick Reference Card
 
+*Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
+
 ## Connect to VPS-Hosted Letta in 3 Steps
 
 ### 1. Set Environment Variable (No Code Changes!)

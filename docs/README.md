@@ -1,6 +1,8 @@
-# Letta Voice Documentation
+# Sanctum Cochlea Documentation
 
-This documentation explains how to set up and configure the Letta Voice project to work with both Letta Cloud and self-hosted Letta instances.
+*Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
+
+This documentation explains how to set up and configure Sanctum Cochlea to work with both Letta Cloud and self-hosted Letta instances.
 
 ## Quick Start
 
@@ -11,7 +13,7 @@ This documentation explains how to set up and configure the Letta Voice project 
 
 ## Overview
 
-The Letta Voice project creates low-latency voice agents using:
+Sanctum Cochlea creates low-latency voice agents using:
 - **Letta** - For AI agent management and memory
 - **LiveKit** - For real-time voice communication
 - **Deepgram** - For speech-to-text
@@ -20,7 +22,7 @@ The Letta Voice project creates low-latency voice agents using:
 ## Architecture
 
 ```
-User Voice → LiveKit → Letta Voice Agent → Letta Instance → AI Models
+User Voice → LiveKit → Sanctum Cochlea Agent → Letta Instance → AI Models
                 ↓
             Speech Processing (STT/TTS)
 ```

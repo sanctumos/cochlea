@@ -1,6 +1,8 @@
-# Stateful Voice Agents
+# Sanctum Cochlea
 
 **🚧 Currently In Development Research Release**
+
+*Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
 
 This repository demonstrates how to use Letta and LiveKit to create low-latency voice agents with memory, tool execution, and persistence. This is a research implementation based on the original Letta Voice architecture, designed to be compatible with:
 
@@ -34,11 +36,54 @@ Creates low-latency voice agents using:
 
 ## 🏗️ Architecture
 
+### Current Implementation
 ```
-User Voice → LiveKit → Letta Voice Agent → Letta Instance → AI Models
+User Voice → LiveKit → Sanctum Cochlea Agent → Letta Instance → AI Models
                 ↓
             Speech Processing (STT/TTS)
 ```
+
+### Target Architecture: SanctumOS Integration
+
+Sanctum Cochlea is designed to integrate with the broader **SanctumOS** modular architecture, functioning as a specialized sensory processing module within a larger agentic operating system.
+
+#### SanctumOS Modular Framework
+SanctumOS is a modular, self-hosted agentic operating system designed to run fully autonomous, context-rich AI agents. It emphasizes:
+- **Modularity**: Clean, plugin-driven integration of specialized components
+- **Privacy**: Complete self-hosting with no vendor lock-in
+- **Autonomy**: Fully autonomous agents with infinite memory management
+- **Real-time Processing**: Sensory filtering and event processing capabilities
+
+#### Cochlea's Role in SanctumOS
+Within the SanctumOS ecosystem, **Cochlea** serves as the **sensory input module**, responsible for:
+
+- **Audio Capture**: Real-time audio stream processing via LiveKit
+- **Speech-to-Text**: Converting audio to text using Deepgram
+- **Sensory Filtering**: Preprocessing and filtering audio data
+- **Data Preparation**: Formatting sensory input for downstream processing
+
+#### Multi-Layer Audio Pipeline
+The target architecture implements a sophisticated multi-layer pipeline:
+
+```
+Cochlea → Thalamus → Broca → Prime Agent → Voicebox
+```
+
+**Layer Breakdown:**
+1. **Cochlea** (Audio Input): Raw audio capture and STT conversion
+2. **Thalamus** (Refinement): Clean, structure, and refine transcripts
+3. **Broca** (Routing): Route events with proper queue management
+4. **Prime Agent** (Processing): Natural language processing via Letta
+5. **Voicebox** (Audio Output): High-quality TTS conversion
+
+#### Biological Inspiration
+This architecture mirrors the human auditory system:
+- **Cochlea**: Transduces sound waves into neural signals (audio → text)
+- **Thalamus**: Relays and refines sensory information (transcript processing)
+- **Broca**: Language production and routing (message management)
+- **Cortex**: Higher-level processing (AI reasoning)
+
+*For detailed technical specifications, see [Audio Pipeline Architecture](AUDIO_PIPELINE_ARCHITECTURE.md)*
 
 ## ⚡ Quick Setup (Minimal)
 
@@ -48,8 +93,8 @@ User Voice → LiveKit → Letta Voice Agent → Letta Instance → AI Models
 
 ### Installation
 ```bash
-git clone git@github.com:letta-ai/letta-voice.git
-cd letta-voice 
+git clone git@github.com:your-org/sanctum-cochlea.git
+cd sanctum-cochlea 
 pip install -r requirements.txt
 ```
 
@@ -173,9 +218,22 @@ The project is now **fully configurable through environment variables** without 
 
 See [Environment Configuration](docs/environment.md) for all available options.
 
-## ⚡ Performance
+## ⚡ Performance & Benefits
 
-*Performance notes and optimization tips will be added here.*
+### SanctumOS Integration Benefits
+- **Modular Architecture**: Clean separation of concerns with pluggable components
+- **Privacy-First**: Complete self-hosting with no external dependencies
+- **Scalability**: Independent scaling of sensory, processing, and routing layers
+- **Fault Tolerance**: Isolated failures don't cascade through the system
+- **Real-time Processing**: Optimized for low-latency voice interactions
+
+### Current Performance Targets
+- **End-to-End Latency**: <2 seconds from speech to response
+- **Voice Detection**: >95% sentence completion rate
+- **Error Handling**: <1% message processing failures
+- **Audio Quality**: Natural, interruption-free conversations
+
+*Detailed performance metrics and optimization strategies will be documented as the pipeline evolves.*
 
 ## 👁️ Viewing Agent Interactions
 
@@ -210,14 +268,15 @@ See [Environment Configuration](docs/environment.md) for all available options.
   - Noise filtering and TTS feedback prevention
   - Session-based state management
 
-### Phase 3: Thalamus-Cochlea Joint Development
+### Phase 3: SanctumOS Integration
 - **Status**: Planning Phase
-- **Goal**: Optimized integration between audio input (Cochlea) and refinement (Thalamus)
+- **Goal**: Full integration with SanctumOS modular architecture
 - **Features**:
-  - Seamless audio-to-text pipeline
-  - Intelligent batching and processing
-  - Performance optimization
-  - Comprehensive monitoring and logging
+  - Complete Cochlea-Thalamus-Broca pipeline implementation
+  - SanctumOS plugin architecture compatibility
+  - Modular component deployment and management
+  - Cross-platform sensory processing capabilities
+  - Real-time event processing and memory management
 
 ### Phase 4: Full Whitepaper
 - **Status**: Pending
@@ -230,10 +289,23 @@ See [Environment Configuration](docs/environment.md) for all available options.
 
 ## 📖 Additional Resources
 
+### Core Technologies
 - **Letta Documentation**: [docs.letta.com](https://docs.letta.com)
 - **LiveKit Documentation**: [docs.livekit.io](https://docs.livekit.io)
 - **Deepgram Documentation**: [developers.deepgram.com](https://developers.deepgram.com)
 - **Cartesia Documentation**: [docs.cartesia.ai](https://docs.cartesia.ai)
+
+### SanctumOS Ecosystem
+- **SanctumOS Overview**: [sanctumos.org](https://sanctumos.org) - Modular agentic operating system
+- **Thalamus Project**: Real-time event processing and sensory refinement
+- **Broca Middleware**: Message routing and queue management
+- **Audio Pipeline Architecture**: [AUDIO_PIPELINE_ARCHITECTURE.md](AUDIO_PIPELINE_ARCHITECTURE.md) - Detailed technical specifications
+
+## 📄 License
+
+**Code**: This project is licensed under the GNU Affero General Public License v3.0 (AGPLv3). See [LICENSE](LICENSE) for details.
+
+**Documentation**: All non-code content (documentation, README files, etc.) is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License (CC-BY-SA 4.0). See [LICENSE-DOCS](LICENSE-DOCS) for details.
 
 ---
 

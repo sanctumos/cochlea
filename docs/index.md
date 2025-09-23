@@ -1,6 +1,8 @@
-# Letta Voice Documentation Index
+# Sanctum Cochlea Documentation Index
 
-Welcome to the Letta Voice project documentation. This guide will help you set up and configure voice agents using Letta, LiveKit, and speech services.
+*Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
+
+Welcome to the Sanctum Cochlea documentation. This guide will help you set up and configure voice agents using Letta, LiveKit, and speech services.
 
 ## 🚀 Quick Start
 
@@ -37,7 +39,7 @@ Welcome to the Letta Voice project documentation. This guide will help you set u
 
 ### Architecture Overview
 ```
-User Voice → LiveKit → Letta Voice Agent → Letta Instance → AI Models
+User Voice → LiveKit → Sanctum Cochlea Agent → Letta Instance → AI Models
                 ↓
             Speech Processing (STT/TTS)
 ```
@@ -93,7 +95,7 @@ User Voice → LiveKit → Letta Voice Agent → Letta Instance → AI Models
 ## 📝 Project Structure
 
 ```
-letta-voice/
+sanctum-cochlea/
 ├── main.py              # Main application entry point
 ├── function_call.py     # Example function calling implementation
 ├── requirements.txt     # Python dependencies

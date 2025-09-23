@@ -1,6 +1,8 @@
 # Basic Setup Guide
 
-This guide covers the initial installation and basic configuration of the Letta Voice project.
+*Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
+
+This guide covers the initial installation and basic configuration of Sanctum Cochlea.
 
 ## Prerequisites
 
@@ -13,8 +15,8 @@ This guide covers the initial installation and basic configuration of the Letta 
 
 ```bash
 # Clone the repository
-git clone git@github.com:letta-ai/letta-voice.git
-cd letta-voice
+git clone git@github.com:your-org/sanctum-cochlea.git
+cd sanctum-cochlea
 
 # Create and activate virtual environment
 python -m venv venv
@@ -101,7 +103,7 @@ You should see output indicating:
 ## Project Structure
 
 ```
-letta-voice/
+sanctum-cochlea/
 ├── main.py              # Main application entry point
 ├── function_call.py     # Example function calling implementation
 ├── requirements.txt     # Python dependencies

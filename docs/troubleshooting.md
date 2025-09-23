@@ -1,6 +1,8 @@
 # Troubleshooting Guide
 
-This guide covers common issues and their solutions when setting up and running the Letta Voice project.
+*Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
+
+This guide covers common issues and their solutions when setting up and running Sanctum Cochlea.
 
 ## Quick Diagnosis
 

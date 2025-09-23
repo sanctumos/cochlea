@@ -1,6 +1,8 @@
 # Environment Configuration Guide
 
-This guide explains all the environment variables and configuration options available for the Letta Voice project.
+*Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
+
+This guide explains all the environment variables and configuration options available for Sanctum Cochlea.
 
 ## Environment File Setup
 

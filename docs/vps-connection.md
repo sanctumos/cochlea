@@ -1,6 +1,8 @@
 # VPS Connection Guide
 
-This guide explains how to connect the Letta Voice project to a VPS-hosted Docker instance of Letta instead of using Letta Cloud.
+*Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
+
+This guide explains how to connect Sanctum Cochlea to a VPS-hosted Docker instance of Letta instead of using Letta Cloud.
 
 ## Overview
 

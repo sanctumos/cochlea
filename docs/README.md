@@ -11,6 +11,12 @@ This documentation explains how to set up and configure Sanctum Cochlea to work 
 - **[Environment Configuration](environment.md)** - Environment variables and configuration options
 - **[Troubleshooting](troubleshooting.md)** - Common issues and solutions
 
+## Documentation Structure
+
+- **[Architecture](architecture/)** - Technical architecture and design documents
+- **[Integration](integration/)** - Integration guides and middleware documentation
+- **[Development](development/)** - Development resources, changelog, and project history
+
 ## Overview
 
 Sanctum Cochlea creates low-latency voice agents using:

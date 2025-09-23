@@ -10,7 +10,7 @@ This repository demonstrates how to use Letta and LiveKit to create low-latency 
 - **Broca Middleware** - Advanced routing and caching layer
 - **Thalamus Refinement** - Transcript cleaning and structuring pipeline
 
-*See [Audio Pipeline Architecture](AUDIO_PIPELINE_ARCHITECTURE.md) for detailed information about the multi-layer approach.*
+*See [Audio Pipeline Architecture](docs/architecture/AUDIO_PIPELINE_ARCHITECTURE.md) for detailed information about the multi-layer approach.*
 
 ## 🚀 Quick Start
 
@@ -83,7 +83,7 @@ This architecture mirrors the human auditory system:
 - **Broca**: Language production and routing (message management)
 - **Cortex**: Higher-level processing (AI reasoning)
 
-*For detailed technical specifications, see [Audio Pipeline Architecture](AUDIO_PIPELINE_ARCHITECTURE.md)*
+*For detailed technical specifications, see [Audio Pipeline Architecture](docs/architecture/AUDIO_PIPELINE_ARCHITECTURE.md)*
 
 ## ⚡ Quick Setup (Minimal)
 
@@ -299,7 +299,7 @@ See [Environment Configuration](docs/environment.md) for all available options.
 - **SanctumOS Overview**: [sanctumos.org](https://sanctumos.org) - Modular agentic operating system
 - **Thalamus Project**: Real-time event processing and sensory refinement
 - **Broca Middleware**: Message routing and queue management
-- **Audio Pipeline Architecture**: [AUDIO_PIPELINE_ARCHITECTURE.md](AUDIO_PIPELINE_ARCHITECTURE.md) - Detailed technical specifications
+- **Audio Pipeline Architecture**: [docs/architecture/AUDIO_PIPELINE_ARCHITECTURE.md](docs/architecture/AUDIO_PIPELINE_ARCHITECTURE.md) - Detailed technical specifications
 
 ## 📄 License
 

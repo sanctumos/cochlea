@@ -10,30 +10,19 @@ Welcome to the Sanctum Cochlea documentation. This guide will help you set up an
 
 ## 📚 Complete Guides
 
-### [Basic Setup Guide](setup.md)
-- Initial installation and configuration
-- Service account setup (LiveKit, Deepgram, Cartesia)
-- Environment configuration
-- Testing your setup
+### Setup & Configuration
+- **[Basic Setup Guide](setup.md)** - Initial installation and configuration
+- **[VPS Connection Guide](vps-connection.md)** - Connect to VPS-hosted Letta instances
+- **[Environment Configuration](environment.md)** - Complete environment variable reference
+- **[Quick Reference Card](quick-reference.md)** - Get connected in 3 steps
 
-### [VPS Connection Guide](vps-connection.md)
-- **Main guide for connecting to VPS-hosted Letta**
-- Code modifications required
-- Environment variable setup
-- Security considerations
-- Testing connectivity
+### Architecture & Integration
+- **[Audio Pipeline Architecture](../architecture/AUDIO_PIPELINE_ARCHITECTURE.md)** - Multi-layer pipeline design
+- **[Broca Plugin Integration](../integration/BROCA_PLUGIN_INTEGRATION.md)** - Middleware integration details
 
-### [Environment Configuration](environment.md)
-- Complete environment variable reference
-- Configuration examples for different environments
-- Security best practices
-- Validation and testing
-
-### [Troubleshooting Guide](troubleshooting.md)
-- Common issues and solutions
-- Debug mode and diagnostics
-- Network troubleshooting
-- Docker troubleshooting
+### Development & Support
+- **[Troubleshooting Guide](troubleshooting.md)** - Common issues and solutions
+- **[Changelog](../development/CHANGELOG.md)** - Project history and updates
 
 ## 🔧 Key Concepts
 
@@ -100,14 +89,23 @@ sanctum-cochlea/
 ├── function_call.py     # Example function calling implementation
 ├── requirements.txt     # Python dependencies
 ├── .env                 # Environment variables (create this)
-├── docs/               # This documentation folder
-│   ├── index.md        # This file
-│   ├── quick-reference.md
-│   ├── setup.md
-│   ├── vps-connection.md
-│   ├── environment.md
-│   └── troubleshooting.md
-└── README.md           # Project overview
+├── LICENSE              # AGPLv3 license for code
+├── LICENSE-DOCS         # CC-BY-SA 4.0 license for documentation
+├── README.md            # Project overview
+└── docs/                # Documentation folder
+    ├── index.md         # This file - documentation index
+    ├── quick-reference.md
+    ├── setup.md
+    ├── vps-connection.md
+    ├── environment.md
+    ├── troubleshooting.md
+    ├── architecture/    # Architecture documentation
+    │   └── AUDIO_PIPELINE_ARCHITECTURE.md
+    ├── integration/     # Integration guides
+    │   └── BROCA_PLUGIN_INTEGRATION.md
+    └── development/     # Development resources
+        ├── CHANGELOG.md
+        └── PR_DESCRIPTION.md
 ```
 
 ---

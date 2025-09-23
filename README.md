@@ -1,6 +1,14 @@
 # Stateful Voice Agents
 
-This repository demonstrates how to use Letta and LiveKit to create low-latency voice agents with memory, tool execution, and persistence.
+**🚧 Currently In Development Research Release**
+
+This repository demonstrates how to use Letta and LiveKit to create low-latency voice agents with memory, tool execution, and persistence. This is a research implementation based on the original Letta Voice architecture, designed to be compatible with:
+
+- **Direct Letta Integration** - Standard Letta Cloud or self-hosted instances
+- **Broca Middleware** - Advanced routing and caching layer
+- **Thalamus Refinement** - Transcript cleaning and structuring pipeline
+
+*See [Audio Pipeline Architecture](AUDIO_PIPELINE_ARCHITECTURE.md) for detailed information about the multi-layer approach.*
 
 ## 🚀 Quick Start
 
@@ -77,8 +85,39 @@ python main.py dev
 
 ### Self-Hosted Letta
 - Set `LETTA_BASE_URL=http://YOUR_VPS_IP:8283/v1` in your `.env`
-- **No code changes required** - fully configurable via environment variables
+- **Custom LLM Wrapper Required** - See technical details below
 - See [VPS Connection Guide](docs/vps-connection.md) for detailed setup
+
+## 🔧 Technical Implementation Details
+
+### Custom LLM Wrapper for VPS Integration
+
+This implementation includes a custom `VPSLettaLLM` class that bypasses LiveKit's `openai.LLM.with_letta()` method, which is hardcoded to use the `/voice-beta` endpoint that only exists in Letta Cloud.
+
+**Why This Was Necessary:**
+- LiveKit's `openai.LLM.with_letta()` only works with Letta Cloud
+- Self-hosted Letta instances use standard `/messages` endpoints
+- The `/voice-beta` endpoint doesn't exist on VPS installations
+
+**How It Works:**
+```python
+class VPSLettaLLM(LLM):
+    def __init__(self, agent_id: str, base_url: str, api_key: str):
+        # Direct integration with Letta's standard message API
+        # Bypasses LiveKit's cloud-only voice-beta endpoint
+```
+
+**Benefits:**
+- ✅ Works with any Letta instance (cloud or self-hosted)
+- ✅ Uses standard Letta message API endpoints
+- ✅ Maintains full compatibility with LiveKit's async context manager protocol
+- ✅ Provides better error handling and debugging capabilities
+
+**Current Implementation:**
+- Direct `requests.post` calls to `/agents/{agent_id}/messages`
+- Proper `ChatContext` to `letta_messages` conversion
+- Async context manager compatibility for LiveKit integration
+- Comprehensive error handling and retry logic
 
 ## 🐳 Self-Hosting Letta
 
@@ -149,6 +188,45 @@ See [Environment Configuration](docs/environment.md) for all available options.
 3. **VPS connection**: [VPS Connection Guide](docs/vps-connection.md)
 4. **Configuration**: [Environment Configuration](docs/environment.md)
 5. **Problems**: [Troubleshooting Guide](docs/troubleshooting.md)
+
+## 🗺️ Development Roadmap
+
+### Phase 1: Broca Plugin Compatibility
+- **Status**: In Development
+- **Goal**: Full integration with Broca middleware for advanced routing and caching
+- **Features**:
+  - Message deduplication and queue management
+  - User context and core block management
+  - Platform-specific response routing
+  - Retry logic and error handling
+
+### Phase 2: Thalamus Protocol Compatibility
+- **Status**: Research Phase
+- **Goal**: Extensive testing and integration of Thalamus refinement pipeline
+- **Features**:
+  - Real-time transcript cleaning and structuring
+  - Speaker-aware segment grouping
+  - Sentence completion logic
+  - Noise filtering and TTS feedback prevention
+  - Session-based state management
+
+### Phase 3: Thalamus-Cochlea Joint Development
+- **Status**: Planning Phase
+- **Goal**: Optimized integration between audio input (Cochlea) and refinement (Thalamus)
+- **Features**:
+  - Seamless audio-to-text pipeline
+  - Intelligent batching and processing
+  - Performance optimization
+  - Comprehensive monitoring and logging
+
+### Phase 4: Full Whitepaper
+- **Status**: Pending
+- **Goal**: Complete technical documentation and research findings
+- **Deliverables**:
+  - Comprehensive architecture documentation
+  - Performance benchmarks and analysis
+  - Integration guides for all supported platforms
+  - Best practices and implementation recommendations
 
 ## 📖 Additional Resources
 

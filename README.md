@@ -2,7 +2,7 @@
 
 **🚧 Currently In Development Research Release**
 
-*Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
+*Sanctum Cochlea is a fork of the letta-voice experiment, audio ingest system for  Sanctum and Letta installations.*
 
 This repository demonstrates how to use Letta and LiveKit to create low-latency voice agents with memory, tool execution, and persistence. This is a research implementation based on the original Letta Voice architecture, designed to be compatible with:
 

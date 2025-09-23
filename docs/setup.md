@@ -62,7 +62,8 @@ You'll need accounts with these services:
 
 ### Sanctum Instance (Required)
 - **Self-Hosted Sanctum Instance** - You must have a working Sanctum instance configured with your preferred LLM provider
-- See [VPS Connection Guide](vps-connection.md) for setup details
+- **🚀 Easy Setup:** Use the [sanctumos/installer](https://github.com/sanctumos/installer) repository for automated installation
+- See [VPS Connection Guide](vps-connection.md) for detailed setup
 
 ## Step 3: Environment Configuration
 

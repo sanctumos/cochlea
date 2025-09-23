@@ -142,6 +142,9 @@ Sanctum Cochlea requires a **working Sanctum instance** (self-hosted AI agent pl
 - **Ollama** - Local models like Llama, Mistral, etc.
 - **Other Providers** - Any LLM provider supported by Sanctum
 
+### Easy Installation
+**🚀 Bootstrap Installer (Recommended):** Use the [sanctumos/installer](https://github.com/sanctumos/installer) repository for automated setup.
+
 ### Configuration
 - Set `LETTA_BASE_URL=http://YOUR_SANCTUM_IP:8283/v1` in your `.env`
 - See [VPS Connection Guide](docs/vps-connection.md) for detailed setup
@@ -310,6 +313,7 @@ See [Environment Configuration](docs/environment.md) for all available options.
 
 ### SanctumOS Ecosystem
 - **SanctumOS Overview**: [sanctumos.org](https://sanctumos.org) - Modular agentic operating system
+- **Sanctum Installer**: [sanctumos/installer](https://github.com/sanctumos/installer) - Bootstrap installer for easy setup
 - **Thalamus Project**: Real-time event processing and sensory refinement
 - **Broca Middleware**: Message routing and queue management
 - **Audio Pipeline Architecture**: [docs/architecture/AUDIO_PIPELINE_ARCHITECTURE.md](docs/architecture/AUDIO_PIPELINE_ARCHITECTURE.md) - Detailed technical specifications

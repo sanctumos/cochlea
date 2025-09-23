@@ -58,9 +58,18 @@ CARTESIA_API_KEY=your_cartesia_api_key
 
 **Note:** The code automatically handles this configuration - no manual code changes are required!
 
-## Step 3: VPS Docker Setup
+## Step 3: Sanctum Instance Setup
 
-Your VPS needs to run Letta in Docker with proper exposure:
+### Easy Installation (Recommended)
+
+**🚀 Bootstrap Installer:**
+- Use the [sanctumos/installer](https://github.com/sanctumos/installer) repository
+- Automated setup with bootstrap installer
+- Handles configuration and deployment automatically
+
+### Manual Docker Setup
+
+Your VPS needs to run Sanctum in Docker with proper exposure:
 
 ```bash
 docker run \

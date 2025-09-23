@@ -140,6 +140,18 @@ Sanctum Cochlea requires a **working Sanctum instance** configured with your pre
 - **Ollama** - Local models like Llama, Mistral, etc.
 - **Other Providers** - Any LLM provider supported by Sanctum
 
+### Easy Installation Options
+
+**🚀 Bootstrap Installer (Recommended):**
+- Use the [sanctumos/installer](https://github.com/sanctumos/installer) repository
+- Automated setup with bootstrap installer
+- Handles configuration and deployment automatically
+
+**Manual Setup:**
+- Follow standard Sanctum installation procedures
+- Configure your preferred LLM provider
+- Set up proper networking and security
+
 **Configuration:**
 ```bash
 LETTA_API_KEY=your_sanctum_api_key_here

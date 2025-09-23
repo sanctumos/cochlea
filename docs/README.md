@@ -1,3 +1,11 @@
+<!--
+Sanctum Cochlea - Audio Ingest System for Sanctum and Letta Installations
+Copyright (C) 2025 Sanctum Cochlea Contributors
+
+This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
+To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
+-->
+
 # Sanctum Cochlea Documentation
 
 *Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
@@ -7,7 +15,8 @@ This documentation explains how to set up and configure Sanctum Cochlea to work 
 ## Quick Start
 
 - **[Basic Setup](setup.md)** - Initial installation and configuration
-- **[VPS Connection Guide](vps-connection.md)** - How to connect to a VPS-hosted Letta Docker instance
+- **[API Endpoints Setup](api-endpoints-setup.md)** - LiveKit, Deepgram, Cartesia, and Sanctum setup
+- **[VPS Connection Guide](vps-connection.md)** - How to connect to a VPS-hosted Sanctum instance
 - **[Environment Configuration](environment.md)** - Environment variables and configuration options
 - **[Troubleshooting](troubleshooting.md)** - Common issues and solutions
 

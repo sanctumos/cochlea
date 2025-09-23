@@ -1,3 +1,11 @@
+<!--
+Sanctum Cochlea - Audio Ingest System for Sanctum and Letta Installations
+Copyright (C) 2025 Sanctum Cochlea Contributors
+
+This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
+To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
+-->
+
 # Sanctum Cochlea
 
 **🚧 Currently In Development Research Release**
@@ -22,7 +30,8 @@ This project includes detailed documentation to help you get started:
 
 - **[📖 Documentation Index](docs/index.md)** - Complete overview and navigation
 - **[🔧 Basic Setup Guide](docs/setup.md)** - Initial installation and configuration
-- **[🌐 VPS Connection Guide](docs/vps-connection.md)** - Connect to self-hosted Letta instances
+- **[🌐 API Endpoints Setup](docs/api-endpoints-setup.md)** - LiveKit, Deepgram, Cartesia, and Sanctum setup
+- **[🌐 VPS Connection Guide](docs/vps-connection.md)** - Connect to self-hosted Sanctum instances
 - **[⚙️ Environment Configuration](docs/environment.md)** - All environment variables and options
 - **[🆘 Troubleshooting Guide](docs/troubleshooting.md)** - Common issues and solutions
 
@@ -90,7 +99,9 @@ This architecture mirrors the human auditory system:
 ### Prerequisites
 - Python 3.10+
 - **Working Sanctum Instance** - Self-hosted AI agent platform (configured with your preferred LLM provider)
-- Accounts with [LiveKit](https://livekit.io/), [Deepgram](https://deepgram.com/), and [Cartesia](https://cartesia.ai/)
+- **API Accounts** - [LiveKit](https://cloud.livekit.io/), [Deepgram](https://deepgram.com/), and [Cartesia](https://cartesia.ai/)
+
+**📋 Detailed API setup instructions:** See [API Endpoints Setup Guide](docs/api-endpoints-setup.md)
 
 ### Installation
 ```bash

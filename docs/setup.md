@@ -1,3 +1,11 @@
+<!--
+Sanctum Cochlea - Audio Ingest System for Sanctum and Letta Installations
+Copyright (C) 2025 Sanctum Cochlea Contributors
+
+This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
+To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
+-->
+
 # Basic Setup Guide
 
 *Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
@@ -35,20 +43,22 @@ pip install -r requirements.txt
 
 You'll need accounts with these services:
 
-### LiveKit
-1. Go to [LiveKit Cloud](https://livekit.io/)
-2. Create an account and get your API credentials
-3. Note down your LiveKit URL, API key, and secret
+**📋 Detailed setup instructions:** See [API Endpoints Setup Guide](api-endpoints-setup.md)
 
-### Deepgram
+### LiveKit (Audio Transport)
+1. Go to [LiveKit Cloud](https://cloud.livekit.io/)
+2. Create a free project
+3. Get your WebSocket URL, API key, and secret from Project Settings
+
+### Deepgram (Speech-to-Text)
 1. Visit [Deepgram](https://deepgram.com/)
-2. Sign up and get your API key
-3. This handles speech-to-text conversion
+2. Sign up for free tier
+3. Generate API key from dashboard
 
-### Cartesia
+### Cartesia (Text-to-Speech)
 1. Go to [Cartesia](https://cartesia.ai/)
-2. Create an account and get your API key
-3. This handles text-to-speech conversion
+2. Create account and get API key
+3. Use REST API endpoint for TTS
 
 ### Sanctum Instance (Required)
 - **Self-Hosted Sanctum Instance** - You must have a working Sanctum instance configured with your preferred LLM provider

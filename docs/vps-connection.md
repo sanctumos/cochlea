@@ -1,3 +1,11 @@
+<!--
+Sanctum Cochlea - Audio Ingest System for Sanctum and Letta Installations
+Copyright (C) 2025 Sanctum Cochlea Contributors
+
+This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
+To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
+-->
+
 # VPS Connection Guide
 
 *Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*

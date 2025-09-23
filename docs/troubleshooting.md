@@ -1,3 +1,11 @@
+<!--
+Sanctum Cochlea - Audio Ingest System for Sanctum and Letta Installations
+Copyright (C) 2025 Sanctum Cochlea Contributors
+
+This work is licensed under the Creative Commons Attribution-ShareAlike 4.0 International License.
+To view a copy of this license, visit https://creativecommons.org/licenses/by-sa/4.0/
+-->
+
 # Troubleshooting Guide
 
 *Sanctum Cochlea is a fork of the letta-voice experiment, evolved into a comprehensive voice agent platform.*
@@ -317,6 +325,38 @@ Include:
 - **Deepgram Documentation**: [developers.deepgram.com](https://developers.deepgram.com)
 - **Cartesia Documentation**: [docs.cartesia.ai](https://docs.cartesia.ai)
 
+## Audio Pipeline & Routing
+
+### Pipeline Architecture
+**Broca stays text-only. All audio endpoints need a shim:**
+
+```
+Cochlea (STT) → Thalamus (refine) → Broca (text)
+Broca (text) → Voicebox (TTS) → LiveKit (audio)
+```
+
+### Sandboxing Strategy
+**For development and testing:**
+- **LiveKit Cloud** = sandbox for audio transport
+- **Deepgram/Cartesia free tiers** = sandbox for STT/TTS
+- **Local testing**: Run Faster-Whisper + XTTS in Docker as your own sandbox stack
+
+### Self-Hosted Alternatives
+**If you need local control:**
+
+**STT Alternatives:**
+- **Faster-Whisper** (CTranslate2 optimized Whisper)
+- **NVIDIA Riva ASR** (GPU-accelerated)
+- **Whisper.cpp** (CPU-optimized)
+
+**TTS Alternatives:**
+- **Dia-1.6B** (expressive, open weights)
+- **XTTS-v2** (efficient voice cloning)
+- **Piper/MeloTTS** (lightweight)
+- **NVIDIA Riva TTS** (GPU-accelerated)
+
+**Requirements:** ≥16 GB VRAM GPU for production quality
+
 ## Prevention
 
 ### Best Practices
@@ -325,6 +365,8 @@ Include:
 3. **Monitor resources** - Watch CPU, memory, and network usage
 4. **Regular updates** - Keep dependencies and system updated
 5. **Backup configurations** - Save working configurations
+6. **API Key Security** - Never commit API keys to version control
+7. **Rate Limit Monitoring** - Monitor usage on free tiers
 
 ### Monitoring
 ```bash

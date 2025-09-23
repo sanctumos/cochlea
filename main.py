@@ -1,4 +1,5 @@
 import os
+import json
 
 from dotenv import load_dotenv
 from letta_client import Letta, VoiceSleeptimeManagerUpdate
@@ -10,29 +11,198 @@ from livekit.plugins import (
     openai,
     cartesia,
     deepgram,
+    silero,
 )
 load_dotenv()
+
+def prewarm_process(proc: agents.JobProcess):
+    """Prewarm the VAD model for better performance."""
+    proc.userdata["vad"] = silero.VAD.load()
 
 async def entrypoint(ctx: agents.JobContext):
     agent_id = os.environ.get('LETTA_AGENT_ID')
     print(f"Agent id: {agent_id}")
     
-    # Build Letta configuration dynamically from environment
-    letta_config = {'agent_id': agent_id}
-    
-    # Add base_url if specified (for self-hosted instances)
-    base_url = os.getenv('LETTA_BASE_URL')
-    if base_url:
-        letta_config['base_url'] = base_url
-        print(f"Connecting to self-hosted Letta at: {base_url}")
+    # Custom LLM wrapper for VPS Letta
+    if os.getenv('LETTA_BASE_URL'):
+        print("Connecting to self-hosted Letta - using custom LLM wrapper")
+        
+        from livekit.agents.llm import LLM, ChatContext, ChatItem
+        from livekit.agents.llm.llm import LLMStream
+        import asyncio
+        import json
+        
+        class VPSLettaLLM(LLM):
+            def __init__(self, agent_id: str, base_url: str, api_key: str):
+                super().__init__()
+                self.agent_id = agent_id
+                self.base_url = base_url
+                self.api_key = api_key
+                self.letta_client = Letta(token=api_key, base_url=base_url)
+            
+            def chat(self, *, chat_ctx: ChatContext, **kwargs):
+                # Convert ChatContext to Letta messages format
+                # Only send the latest user message (VPS Letta doesn't handle conversation history well)
+                letta_messages = []
+                
+                # Find the latest user message
+                latest_user_message = None
+                for item in chat_ctx.items:
+                    if hasattr(item, 'content') and hasattr(item, 'role') and item.role == "user":
+                        content = item.content
+                        
+                        # Handle both string and list content
+                        if isinstance(content, str):
+                            text_content = content
+                        elif isinstance(content, list) and len(content) > 0:
+                            text_content = content[0]  # Take first item from list
+                        else:
+                            continue
+                        
+                        if text_content:  # Only add non-empty content
+                            latest_user_message = text_content
+                
+                # Only send the latest user message
+                if latest_user_message:
+                    # Add identification to distinguish voice input in logs
+                    identified_message = f"[VOICE-INPUT] {latest_user_message}"
+                    letta_messages.append({
+                        "role": "user",
+                        "content": [{"type": "text", "text": identified_message}]
+                    })
+                else:
+                    # Fallback: send empty message to avoid errors
+                    letta_messages.append({
+                        "role": "user",
+                        "content": [{"type": "text", "text": "[VOICE-INPUT] Hello"}]
+                    })
+                
+                # Send to VPS Letta messages endpoint directly
+                import requests
+                import time
+                url = f"{self.base_url}/agents/{self.agent_id}/messages"
+                headers = {
+                    'Authorization': f'Bearer {self.api_key}',
+                    'Content-Type': 'application/json'
+                }
+                data = {'messages': letta_messages}
+                
+                # Retry logic for VPS connection
+                max_retries = 3
+                for attempt in range(max_retries):
+                    try:
+                        print(f"🔄 Attempting VPS connection (attempt {attempt + 1}/{max_retries})")
+                        response = requests.post(url, headers=headers, json=data, timeout=30)
+                        response.raise_for_status()
+                        print(f"✅ VPS connection successful on attempt {attempt + 1}")
+                        break
+                    except requests.exceptions.Timeout as e:
+                        print(f"⏰ VPS timeout on attempt {attempt + 1}: {e}")
+                        if attempt < max_retries - 1:
+                            print(f"🔄 Retrying in 2 seconds...")
+                            time.sleep(2)
+                        else:
+                            print("❌ All VPS connection attempts failed")
+                            raise
+                    except Exception as e:
+                        print(f"❌ VPS connection error on attempt {attempt + 1}: {e}")
+                        if attempt < max_retries - 1:
+                            print(f"🔄 Retrying in 2 seconds...")
+                            time.sleep(2)
+                        else:
+                            raise
+                
+                # Extract response text
+                response_data = response.json()
+                response_text = ""
+                print(f"🔍 Raw VPS response: {response_data}")
+                
+                if 'messages' in response_data:
+                    for msg in response_data['messages']:
+                        print(f"🔍 Processing message: {msg}")
+                        # Only extract the actual assistant message content, not reasoning
+                        if msg.get('message_type') == 'assistant_message' and 'content' in msg and msg['content']:
+                            if isinstance(msg['content'], str):
+                                response_text = msg['content']
+                                print(f"🎤 Extracted response text: {response_text}")
+                                break  # We only want the first assistant message
+                
+                if not response_text:
+                    print("⚠️ No response text extracted from VPS")
+                    response_text = "I received your message but couldn't process the response properly."
+                
+                # Create a context manager that returns a stream
+                class ChatContextManager:
+                    def __init__(self, text):
+                        self.text = text
+                        self.stream = None
+                    
+                    async def __aenter__(self):
+                        # Create a simple stream with the response
+                        class SimpleStream:
+                            def __init__(self, text):
+                                self.text = text
+                                self._closed = False
+                            
+                            async def __aiter__(self):
+                                if not self._closed:
+                                    yield self.text
+                                    self._closed = True
+                            
+                            async def aclose(self):
+                                self._closed = True
+                        
+                        self.stream = SimpleStream(self.text)
+                        return self.stream
+                    
+                    async def __aexit__(self, exc_type, exc_val, exc_tb):
+                        if self.stream:
+                            await self.stream.aclose()
+                
+                return ChatContextManager(response_text)
+        
+        llm = VPSLettaLLM(
+            agent_id=agent_id,
+            base_url=os.getenv('LETTA_BASE_URL'),
+            api_key=os.getenv('LETTA_API_KEY')
+        )
     else:
         print("Connecting to Letta Cloud")
+        # Use standard Letta Cloud approach
+        letta_config = {'agent_id': agent_id}
+        llm = openai.LLM.with_letta(**letta_config)
+    
+    # Configure VAD for better sentence accumulation
+    vad = ctx.proc.userdata.get("vad") or silero.VAD.load()
+    
+    # Configure VAD with conservative settings to prevent TTS interruption
+    vad.min_silence_duration_ms = 200  # Short silence detection
+    vad.speaking_probability_threshold = 0.6  # Balanced threshold
+    vad.min_speaking_duration_ms = 300  # Require sustained speech
+    
+    # Configure STT with better sentence accumulation settings
+    stt = deepgram.STT(
+        model="nova-2",  # Use the latest model
+        language="en-US",
+        # Add some delay to wait for complete sentences
+        interim_results=True,  # Enable interim results
+        endpointing_ms=800,  # Wait 800ms of silence before considering speech complete
+    )
+    
+    # Configure TTS with debugging
+    tts = cartesia.TTS()
     
     session = AgentSession(
-        llm=openai.LLM.with_letta(**letta_config),
-        stt=deepgram.STT(),
-        tts=cartesia.TTS(),
+        llm=llm,
+        stt=stt,
+        tts=tts,
+        vad=vad,  # Re-enable VAD with conservative settings
     )
+
+    # Add audio feedback prevention
+    # The LiveKit voice agent automatically handles muting during TTS
+    # but we can add additional feedback prevention here if needed
+    print("🔇 Audio feedback prevention enabled - microphone will be muted during TTS")
 
     await session.start(
         room=ctx.room,

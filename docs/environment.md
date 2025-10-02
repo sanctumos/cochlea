@@ -53,6 +53,16 @@ CARTESIA_API_KEY=your_cartesia_api_key
 | `DEEPGRAM_API_KEY` | Deepgram API key for speech-to-text | Yes | `...` |
 | `CARTESIA_API_KEY` | Cartesia API key for text-to-speech | Yes | `...` |
 
+### Cartesia Voice Configuration
+
+| Variable | Description | Default | Example |
+|----------|-------------|---------|---------|
+| `CARTESIA_VOICE_ID` | Specific voice ID to use for TTS | Default voice | `voice_123` |
+| `CARTESIA_MODEL` | Cartesia model to use | `sonic-2` | `sonic-2`, `sonic` |
+| `CARTESIA_LANGUAGE` | Language code for TTS | `en` | `en`, `es`, `fr`, `de` |
+| `CARTESIA_SAMPLE_RATE` | Audio sample rate in Hz | `44100` | `22050`, `44100`, `48000` |
+| `CARTESIA_ENCODING` | Audio encoding format | `pcm_f32le` | `pcm_f32le`, `pcm_s16le` |
+
 ## Optional Environment Variables
 
 ### Letta Agent Configuration
@@ -94,6 +104,13 @@ LIVEKIT_API_KEY=APIkey123
 LIVEKIT_API_SECRET=secret456
 DEEPGRAM_API_KEY=dg_key_789
 CARTESIA_API_KEY=cart_key_012
+
+# Cartesia Voice Configuration (Optional)
+CARTESIA_VOICE_ID=voice_123
+CARTESIA_MODEL=sonic-2
+CARTESIA_LANGUAGE=en
+CARTESIA_SAMPLE_RATE=44100
+CARTESIA_ENCODING=pcm_f32le
 ```
 
 ### Production Sanctum Setup
@@ -106,6 +123,13 @@ LIVEKIT_API_KEY=APIkey123
 LIVEKIT_API_SECRET=secret456
 DEEPGRAM_API_KEY=dg_key_789
 CARTESIA_API_KEY=cart_key_012
+
+# Cartesia Voice Configuration for Production
+CARTESIA_VOICE_ID=voice_prod_456
+CARTESIA_MODEL=sonic-2
+CARTESIA_LANGUAGE=en
+CARTESIA_SAMPLE_RATE=48000
+CARTESIA_ENCODING=pcm_f32le
 ```
 
 ### Production Setup with HTTPS
@@ -141,6 +165,77 @@ LIVEKIT_API_KEY=APIkey123
 LIVEKIT_API_SECRET=secret456
 DEEPGRAM_API_KEY=dg_key_789
 CARTESIA_API_KEY=cart_key_012
+
+# Advanced Cartesia Voice Configuration
+CARTESIA_VOICE_ID=voice_custom_789
+CARTESIA_MODEL=sonic-2
+CARTESIA_LANGUAGE=en
+CARTESIA_SAMPLE_RATE=44100
+CARTESIA_ENCODING=pcm_f32le
+```
+
+## Cartesia Voice Configuration Guide
+
+### Available Voice Options
+
+Cartesia provides multiple voice options that can be configured via environment variables:
+
+#### Voice Selection
+- **`CARTESIA_VOICE_ID`**: Set to a specific voice ID to use a particular voice
+- **Default**: If not specified, Cartesia will use its default voice
+- **Voice IDs**: Available voice IDs can be found in your Cartesia dashboard
+
+#### Model Configuration
+- **`CARTESIA_MODEL`**: Choose between available models
+  - `sonic-2` (default): Latest model with improved quality
+  - `sonic`: Previous generation model
+
+#### Language Support
+- **`CARTESIA_LANGUAGE`**: Language code for TTS
+  - `en` (default): English
+  - `es`: Spanish
+  - `fr`: French
+  - `de`: German
+  - Other languages as supported by Cartesia
+
+#### Audio Quality Settings
+- **`CARTESIA_SAMPLE_RATE`**: Audio sample rate
+  - `22050`: Lower quality, smaller files
+  - `44100` (default): Standard quality
+  - `48000`: High quality, larger files
+
+- **`CARTESIA_ENCODING`**: Audio encoding format
+  - `pcm_f32le` (default): 32-bit float, little-endian
+  - `pcm_s16le`: 16-bit signed integer, little-endian
+
+### Example Voice Configurations
+
+#### Professional Voice Setup
+```bash
+CARTESIA_VOICE_ID=voice_professional_001
+CARTESIA_MODEL=sonic-2
+CARTESIA_LANGUAGE=en
+CARTESIA_SAMPLE_RATE=48000
+CARTESIA_ENCODING=pcm_f32le
+```
+
+#### Multilingual Setup
+```bash
+# English voice
+CARTESIA_VOICE_ID=voice_en_001
+CARTESIA_LANGUAGE=en
+
+# Spanish voice (change CARTESIA_LANGUAGE to es)
+CARTESIA_VOICE_ID=voice_es_001
+CARTESIA_LANGUAGE=es
+```
+
+#### Low-Latency Setup
+```bash
+CARTESIA_VOICE_ID=voice_fast_001
+CARTESIA_MODEL=sonic-2
+CARTESIA_SAMPLE_RATE=22050
+CARTESIA_ENCODING=pcm_s16le
 ```
 
 ## Environment-Specific Configurations

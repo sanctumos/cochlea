@@ -95,6 +95,7 @@ async def entrypoint(ctx: agents.JobContext):
             self.buffer_timeout_ms = 1500  # 1.5 seconds timeout
             self.processing_task = None
             self.pending_speech = None
+            self.is_processing = False  # Flag to prevent duplicate processing
             
             # Context tracking for fragmented messages
             self.conversation_history = []  # Track what we've sent to Letta
@@ -113,8 +114,13 @@ async def entrypoint(ctx: agents.JobContext):
             
             if not transcript or not transcript.strip():
                 return
-            
+                
             transcript = transcript.strip()
+            
+            # PREVENT DUPLICATE PROCESSING: Don't start timer if already processing OR pending
+            if self.is_processing or self.pending_speech:
+                print(f"⏸️ Already processing/pending speech - ignoring transcript: '{transcript}'")
+                return
             
             # AMPLITUDE-BASED VOICE DETECTION: Check if we're getting new words
             transcript_changed = transcript != self.current_transcript
@@ -124,38 +130,53 @@ async def entrypoint(ctx: agents.JobContext):
             else:
                 print(f"🔄 Same transcript: '{transcript}' (is_final: {is_final}, tts_playing: {self.tts_is_playing})")
             
-            # Update our current transcript (LiveKit handles progressive updates)
-            self.current_transcript = transcript
-            self.last_update_time = current_time
-            
             # CONTEXT-AWARE PROCESSING: Check if we should wait for TTS to finish
             if self.tts_is_playing:
                 print(f"🎤 TTS is playing - buffering transcript until TTS completes")
-                # Don't start timer while TTS is playing - wait for TTS completion
+                # Don't update state or start timer while TTS is playing
                 return
             
-            # Cancel any existing processing task
-            if self.processing_task and not self.processing_task.done():
-                print(f"⏰ Cancelling existing timer")
-                self.processing_task.cancel()
+            # Update our current transcript only when we can process
+            self.current_transcript = transcript
+            self.last_update_time = current_time
             
-            # Schedule processing after timeout (TIMER HAS FINAL AUTHORITY)
-            import asyncio
-            async def delayed_process():
-                print(f"⏰ Timer started - will process in {self.buffer_timeout_ms}ms")
-                await asyncio.sleep(self.buffer_timeout_ms / 1000.0)
-                if self.current_transcript:
-                    print(f"🎯 Timer-based completion: '{self.current_transcript}'")
-                    self.process_complete_speech(self.current_transcript)
-                else:
-                    print(f"⏰ Timer fired but no transcript")
-            
-            self.processing_task = asyncio.create_task(delayed_process())
+            # PREVENT DUPLICATE TIMERS: Only create timer if transcript changed or no timer exists
+            if transcript_changed or not self.processing_task or self.processing_task.done():
+                # Cancel any existing processing task
+                if self.processing_task and not self.processing_task.done():
+                    print(f"⏰ Cancelling existing timer")
+                    self.processing_task.cancel()
+                
+                # Schedule processing after timeout (TIMER HAS FINAL AUTHORITY)
+                import asyncio
+                async def delayed_process(captured_transcript):
+                    print(f"⏰ Timer started - will process in {self.buffer_timeout_ms}ms")
+                    await asyncio.sleep(self.buffer_timeout_ms / 1000.0)
+                    if captured_transcript:
+                        print(f"🎯 Timer-based completion: '{captured_transcript}'")
+                        self.process_complete_speech(captured_transcript)
+                    else:
+                        print(f"⏰ Timer fired but no transcript")
+                
+                self.processing_task = asyncio.create_task(delayed_process(transcript))
+            else:
+                print(f"⏸️ Same transcript - not creating new timer")
         
         def process_complete_speech(self, transcript: str):
             """Process complete speech with context awareness"""
             import time as time_module
             current_time = time_module.time()
+            
+            # ATOMIC PROCESSING CHECK: Prevent race conditions
+            if self.is_processing:
+                print(f"⏸️ Already processing - ignoring duplicate: '{transcript}'")
+                return
+            
+            # Set processing flag immediately to prevent race conditions
+            self.is_processing = True
+            
+            # Clear current transcript immediately to prevent duplicate processing
+            self.current_transcript = ""
             
             # Only process if we have a meaningful transcript
             if transcript and len(transcript.strip()) > 3:  # Avoid single words
@@ -178,11 +199,15 @@ async def entrypoint(ctx: agents.JobContext):
                 # Update conversation history
                 self.conversation_history.append(transcript)
                 self.last_sent_time = current_time
-                self.current_transcript = ""  # Clear buffer
                 
             else:
                 print(f"⏭️ Skipping short/incomplete transcript: '{transcript}'")
                 self.current_transcript = ""  # Clear buffer anyway
+            
+            # ALWAYS reset processing flag after setting pending_speech
+            # The VPSLettaLLM will handle the actual processing
+            # This prevents the buffer from being permanently locked
+            self.is_processing = False
         
         def on_tts_started(self, text: str, estimated_duration_ms: int):
             """Called when TTS starts playing"""

@@ -87,7 +87,7 @@ async def entrypoint(ctx: agents.JobContext):
     agent_id = os.environ.get('LETTA_AGENT_ID')
     print(f"Agent id: {agent_id}")
     
-    # Hybrid approach: Use LiveKit's progressive transcripts + our completion detection
+    # Context-aware speech buffering with timer + amplitude threshold (VAD alternative)
     class SpeechBuffer:
         def __init__(self):
             self.current_transcript = ""  # Single progressive transcript (not array)
@@ -95,9 +95,19 @@ async def entrypoint(ctx: agents.JobContext):
             self.buffer_timeout_ms = 1500  # 1.5 seconds timeout
             self.processing_task = None
             self.pending_speech = None
+            
+            # Context tracking for fragmented messages
+            self.conversation_history = []  # Track what we've sent to Letta
+            self.last_sent_time = 0  # When we last sent something to Letta
+            self.tts_is_playing = False  # Track if TTS is currently playing
+            self.expected_tts_duration = 0  # How long TTS should take
+            
+            # Amplitude-based voice detection (VAD alternative)
+            self.silence_threshold_ms = 1000  # 1 second of no new words = silence
+            self.last_word_time = 0  # Track when we last got new words
         
-        def on_transcript_received(self, transcript: str, is_final: bool = False):
-            """Handle progressive transcripts from LiveKit"""
+        def on_transcript_received(self, transcript: str, is_final: bool = False, user_is_speaking: bool = False):
+            """Handle progressive transcripts with timer + amplitude threshold (VAD alternative)"""
             import time as time_module
             current_time = time_module.time()
             
@@ -106,21 +116,30 @@ async def entrypoint(ctx: agents.JobContext):
             
             transcript = transcript.strip()
             
+            # AMPLITUDE-BASED VOICE DETECTION: Check if we're getting new words
+            transcript_changed = transcript != self.current_transcript
+            if transcript_changed:
+                self.last_word_time = current_time
+                print(f"🔄 New words detected: '{transcript}' (is_final: {is_final}, tts_playing: {self.tts_is_playing})")
+            else:
+                print(f"🔄 Same transcript: '{transcript}' (is_final: {is_final}, tts_playing: {self.tts_is_playing})")
+            
             # Update our current transcript (LiveKit handles progressive updates)
             self.current_transcript = transcript
             self.last_update_time = current_time
             
-            print(f"🔄 Progressive transcript: '{transcript}' (is_final: {is_final})")
-            
-            # IGNORE LiveKit's is_final - it's too aggressive (sentence boundaries, not complete thoughts)
-            # Always use our timer-based completion instead
+            # CONTEXT-AWARE PROCESSING: Check if we should wait for TTS to finish
+            if self.tts_is_playing:
+                print(f"🎤 TTS is playing - buffering transcript until TTS completes")
+                # Don't start timer while TTS is playing - wait for TTS completion
+                return
             
             # Cancel any existing processing task
             if self.processing_task and not self.processing_task.done():
                 print(f"⏰ Cancelling existing timer")
                 self.processing_task.cancel()
             
-            # Schedule processing after timeout (our completion detection)
+            # Schedule processing after timeout (TIMER HAS FINAL AUTHORITY)
             import asyncio
             async def delayed_process():
                 print(f"⏰ Timer started - will process in {self.buffer_timeout_ms}ms")
@@ -134,15 +153,52 @@ async def entrypoint(ctx: agents.JobContext):
             self.processing_task = asyncio.create_task(delayed_process())
         
         def process_complete_speech(self, transcript: str):
-            """Process complete speech and clear buffer"""
+            """Process complete speech with context awareness"""
+            import time as time_module
+            current_time = time_module.time()
+            
             # Only process if we have a meaningful transcript
             if transcript and len(transcript.strip()) > 3:  # Avoid single words
-                self.pending_speech = transcript
+                
+                # CONTEXT-AWARE PROCESSING: Check if we sent something too early
+                time_since_last_sent = current_time - self.last_sent_time
+                was_cut_off_early = time_since_last_sent < (self.expected_tts_duration / 1000.0)
+                
+                if was_cut_off_early and self.conversation_history:
+                    # We sent something too early - include context
+                    previous_messages = self.conversation_history[-3:]  # Last 3 messages
+                    context_message = f"[CUT OFF EARLY] Earlier I got cut off mid-sentence. Previous fragments: {' | '.join(previous_messages)}. Here's the complete thought: {transcript}"
+                    self.pending_speech = context_message
+                    print(f"🔄 Context-aware speech (was cut off): '{context_message}'")
+                else:
+                    # Normal processing
+                    self.pending_speech = transcript
+                    print(f"✅ Speech ready for processing: '{transcript}'")
+                
+                # Update conversation history
+                self.conversation_history.append(transcript)
+                self.last_sent_time = current_time
                 self.current_transcript = ""  # Clear buffer
-                print(f"✅ Speech ready for processing: '{transcript}'")
+                
             else:
                 print(f"⏭️ Skipping short/incomplete transcript: '{transcript}'")
                 self.current_transcript = ""  # Clear buffer anyway
+        
+        def on_tts_started(self, text: str, estimated_duration_ms: int):
+            """Called when TTS starts playing"""
+            self.tts_is_playing = True
+            self.expected_tts_duration = estimated_duration_ms
+            print(f"🎤 TTS started: '{text}' (estimated {estimated_duration_ms}ms)")
+        
+        def on_tts_completed(self):
+            """Called when TTS finishes playing"""
+            self.tts_is_playing = False
+            print(f"🎤 TTS completed - ready for new speech")
+            
+            # If we have buffered speech, process it now
+            if self.current_transcript:
+                print(f"🎯 Processing buffered speech after TTS completion: '{self.current_transcript}'")
+                self.process_complete_speech(self.current_transcript)
     
     speech_buffer = SpeechBuffer()
     
@@ -347,9 +403,9 @@ async def entrypoint(ctx: agents.JobContext):
     
     # Configure VAD with extremely conservative settings to prevent TTS interruption
     vad = ctx.proc.userdata.get("vad") or silero.VAD.load()
-    vad.min_silence_duration_ms = 7000  # Very long silence detection to prevent TTS feedback
-    vad.speaking_probability_threshold = 0.98  # Very high threshold to reduce false triggers
-    vad.min_speaking_duration_ms = 3000  # Require very long sustained speech to avoid TTS interruption
+    vad.min_silence_duration_ms = 1000  # Reasonable silence detection
+    vad.speaking_probability_threshold = 0.5  # Normal threshold for speech detection
+    vad.min_speaking_duration_ms = 200  # Short minimum speaking duration
     
     # Configure STT with proper sentence completion to prevent mid-sentence cuts
     stt = deepgram.STT(
@@ -410,12 +466,12 @@ async def entrypoint(ctx: agents.JobContext):
         print("❌ No valid TTS API keys found. Please configure Cartesia or OpenAI in your .env file.")
         raise ValueError("No TTS provider configured")
     
-    # Try without VAD entirely to prevent interruption
+    # Enable VAD for detection events (not interruption)
     session = AgentSession(
         llm=llm,
         stt=stt,
         tts=tts,
-        # vad=vad,  # Disable VAD entirely to prevent TTS interruption
+        vad=vad,  # Enable VAD for detection events only
     )
 
     # Advanced audio feedback prevention system without VAD
@@ -552,7 +608,7 @@ async def entrypoint(ctx: agents.JobContext):
         else:
             raise
     
-    # Add VAD event handlers for detection-only (not interruption)
+    # Add VAD event handlers AFTER starting the session
     @session.on("speaking_started")
     def on_speaking_started():
         nonlocal user_is_speaking
@@ -565,46 +621,90 @@ async def entrypoint(ctx: agents.JobContext):
         user_is_speaking = False
         print("🔇 User stopped speaking (VAD detected)")
     
+    # Enhanced say method with smart duration-based feedback prevention and TTS tracking
+    async def say_with_feedback_prevention(text):
+        """Say text with smart duration-based feedback prevention and TTS tracking"""
+        # Estimate TTS duration for context awareness
+        estimated_duration_ms = feedback_prevention.estimate_tts_duration(text)
+        
+        # Notify speech buffer that TTS is starting
+        speech_buffer.on_tts_started(text, estimated_duration_ms)
+        feedback_prevention.on_tts_start(text)  # Pass text for duration estimation
+        
+        try:
+            await session.say(text)
+        finally:
+            # Notify speech buffer that TTS completed
+            speech_buffer.on_tts_completed()
+            feedback_prevention.on_tts_end()  # Always call end, even on error
+    
     # Main loop for processing buffered speech
     async def process_buffered_speech():
         """Main loop to process buffered speech"""
+        import httpx
+        
         while True:
             # Check for buffered speech to process
             if speech_buffer.pending_speech:
                 full_speech = speech_buffer.pending_speech
-                speech_buffer.pending_speech = None  # Clear it after processing
+                speech_buffer.pending_speech = None  # Clear it BEFORE processing to prevent duplicates
                 
                 print(f"🎯 Sending buffered speech to LLM: '{full_speech}'")
                 
-                # Create a new ChatContext for the buffered speech
-                chat_ctx_for_buffered_speech = ChatContext.empty()
-                
-                # Add the buffered speech as a user message
-                identified_message = f"[VOICE-INPUT] {full_speech}"
-                chat_ctx_for_buffered_speech.items.append({
-                    "role": "user",
-                    "content": [{"type": "text", "text": identified_message}]
-                })
-                
-                # Process the buffered speech with the LLM
-                async with llm.chat(chat_ctx=chat_ctx_for_buffered_speech) as stream:
-                    async for chunk in stream:
-                        if chunk.text:
-                            await say_with_feedback_prevention(chunk.text)
+                # BYPASS the main LLM wrapper and call VPS directly
+                try:
+                    # Prepare the message for VPS
+                    identified_message = f"[VOICE-INPUT] {full_speech}"
+                    
+                    # Call VPS directly (same logic as in VPSLettaLLM.chat)
+                    async with httpx.AsyncClient() as client:
+                        response = await client.post(
+                            f"{os.getenv('LETTA_BASE_URL')}/agents/{agent_id}/chat",
+                            headers={
+                                "Authorization": f"Bearer {os.getenv('LETTA_API_KEY')}",
+                                "Content-Type": "application/json"
+                            },
+                            json={
+                                "messages": [{"role": "user", "content": identified_message}]
+                            },
+                            timeout=30.0
+                        )
+                        
+                        if response.status_code == 200:
+                            vps_data = response.json()
+                            print(f"🔍 Raw VPS response: {vps_data}")
+                            
+                            # Extract and process the response
+                            if "messages" in vps_data:
+                                for message in vps_data["messages"]:
+                                    if message.get("message_type") == "assistant_message":
+                                        response_text = message.get("content", "")
+                                        if response_text:
+                                            print(f"🎤 Extracted response text: {response_text}")
+                                            await say_with_feedback_prevention(response_text)
+                                            break
+                        else:
+                            print(f"❌ VPS request failed: {response.status_code}")
+                            
+                except Exception as e:
+                    print(f"❌ Error processing buffered speech: {e}")
             
             await asyncio.sleep(0.1)  # Small delay to prevent busy-waiting
     
-    # Start the speech processing loop
-    asyncio.create_task(process_buffered_speech())
+    # Start the speech processing loop (DISABLED - using main LLM wrapper instead)
+    # asyncio.create_task(process_buffered_speech())
     
-    # Hybrid approach: Use LiveKit's progressive transcripts + our completion detection
+    # Hybrid approach: Use LiveKit's progressive transcripts + VAD permissive + timer final authority
     @session.on("user_input_transcribed")
     def on_user_input_transcribed(event):
         """Handle progressive transcripts from LiveKit"""
+        print(f"🔍 Raw transcript event: '{event.transcript}' (is_final: {getattr(event, 'is_final', False)}, user_speaking: {user_is_speaking})")
+        
         if event.transcript and event.transcript.strip():
             # Check if this is a final transcript (LiveKit's determination)
             is_final = getattr(event, 'is_final', False)
-            speech_buffer.on_transcript_received(event.transcript.strip(), is_final=is_final)
+            # Pass VAD state to buffer for permissive filtering
+            speech_buffer.on_transcript_received(event.transcript.strip(), is_final=is_final, user_is_speaking=user_is_speaking)
     
     # Cancel timers when Deepgram disconnects to prevent processing stale transcripts
     @session.on("track_unsubscribed")
@@ -615,15 +715,6 @@ async def entrypoint(ctx: agents.JobContext):
             if speech_buffer.processing_task and not speech_buffer.processing_task.done():
                 speech_buffer.processing_task.cancel()
                 print("⏰ Cancelled speech buffer timer due to track unsubscription")
-
-    # Enhanced say method with smart duration-based feedback prevention
-    async def say_with_feedback_prevention(text):
-        """Say text with smart duration-based feedback prevention"""
-        feedback_prevention.on_tts_start(text)  # Pass text for duration estimation
-        try:
-            await session.say(text)
-        finally:
-            feedback_prevention.on_tts_end()
 
     await say_with_feedback_prevention("Hi, what's your name?")
     await ctx.connect(auto_subscribe=AutoSubscribe.AUDIO_ONLY)
@@ -690,6 +781,5 @@ if __name__ == "__main__":
     # Now that LETTA_AGENT_ID is set, run the worker app
     agents.cli.run_app(agents.WorkerOptions(
         entrypoint_fnc=entrypoint,
-        # VAD is handled manually for precise control
-        # vad=silero.VAD.load(),
+        prewarm_fnc=prewarm_process,  # Enable VAD prewarming
     ))

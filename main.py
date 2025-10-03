@@ -92,7 +92,7 @@ async def entrypoint(ctx: agents.JobContext):
         def __init__(self):
             self.current_transcript = ""  # Single progressive transcript (not array)
             self.last_update_time = 0
-            self.buffer_timeout_ms = 1500  # 1.5 seconds timeout
+            self.buffer_timeout_ms = 3000  # 3 seconds timeout - longer for complete thoughts
             self.processing_task = None
             self.pending_speech = None
             self.is_processing = False  # Flag to prevent duplicate processing
@@ -130,6 +130,13 @@ async def entrypoint(ctx: agents.JobContext):
             else:
                 print(f"🔄 Same transcript: '{transcript}' (is_final: {is_final}, tts_playing: {self.tts_is_playing})")
             
+            # SMART END-OF-SPEECH DETECTION: Look for natural sentence endings
+            has_sentence_ending = any(transcript.rstrip().endswith(punct) for punct in ['.', '!', '?'])
+            word_count = len(transcript.split())
+            is_substantial = word_count >= 5  # At least 5 words
+            
+            print(f"📝 Speech analysis: words={word_count}, has_ending={has_sentence_ending}, substantial={is_substantial}")
+            
             # CONTEXT-AWARE PROCESSING: Check if we should wait for TTS to finish
             if self.tts_is_playing:
                 print(f"🎤 TTS is playing - buffering transcript until TTS completes")
@@ -140,25 +147,33 @@ async def entrypoint(ctx: agents.JobContext):
             self.current_transcript = transcript
             self.last_update_time = current_time
             
-            # PREVENT DUPLICATE TIMERS: Only create timer if transcript changed or no timer exists
+            # SMART TIMER LOGIC: Adjust timeout based on speech characteristics
             if transcript_changed or not self.processing_task or self.processing_task.done():
                 # Cancel any existing processing task
                 if self.processing_task and not self.processing_task.done():
                     print(f"⏰ Cancelling existing timer")
                     self.processing_task.cancel()
                 
-                # Schedule processing after timeout (TIMER HAS FINAL AUTHORITY)
+                # ADAPTIVE TIMEOUT: Shorter for complete sentences, longer for fragments
+                if has_sentence_ending and is_substantial:
+                    timeout_ms = 1000  # 1 second for complete sentences
+                    print(f"⚡ Complete sentence detected - using short timeout")
+                else:
+                    timeout_ms = self.buffer_timeout_ms  # 3 seconds for fragments
+                    print(f"⏳ Fragment detected - using long timeout")
+                
+                # Schedule processing after adaptive timeout
                 import asyncio
-                async def delayed_process(captured_transcript):
-                    print(f"⏰ Timer started - will process in {self.buffer_timeout_ms}ms")
-                    await asyncio.sleep(self.buffer_timeout_ms / 1000.0)
+                async def delayed_process(captured_transcript, timeout):
+                    print(f"⏰ Timer started - will process in {timeout}ms")
+                    await asyncio.sleep(timeout / 1000.0)
                     if captured_transcript:
                         print(f"🎯 Timer-based completion: '{captured_transcript}'")
                         self.process_complete_speech(captured_transcript)
                     else:
                         print(f"⏰ Timer fired but no transcript")
                 
-                self.processing_task = asyncio.create_task(delayed_process(transcript))
+                self.processing_task = asyncio.create_task(delayed_process(transcript, timeout_ms))
             else:
                 print(f"⏸️ Same transcript - not creating new timer")
         
